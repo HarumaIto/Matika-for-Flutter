@@ -33,7 +33,6 @@ class _ARMapViewState extends State<ARMapView> {
   @override
   void initState() {
     super.initState();
-    //setLocalObject();
     GPSUtil.checkLocationPermission();
   }
 
@@ -45,26 +44,17 @@ class _ARMapViewState extends State<ARMapView> {
 
   @override
   Widget build(BuildContext context) {
-    setObject();
+    updateObjectPosition();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("AR Map View"),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.8,
-            child: ARView(
-              onARViewCreated: onARViewCreated,
-            ),
-          ),
-          ElevatedButton(
-            onPressed: setObject,
-            child: const Text("Set Object"),
-          )
-        ],
+      body: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.8,
+        child: ARView(
+          onARViewCreated: onARViewCreated,
+        ),
       ),
     );
   }
@@ -86,7 +76,7 @@ class _ARMapViewState extends State<ARMapView> {
   }
 
   // オブジェクトを設置する
-  Future<void> setObject() async {
+  Future<void> updateObjectPosition() async {
     Vector3 targetPosition = await GPSUtil.convertCoordinate(latitude, longitude, altitude);
     print(targetPosition);
 

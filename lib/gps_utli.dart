@@ -61,28 +61,32 @@ class GPSUtil {
   }
 
   // 位置情報の権限をリクエストする
-  static void checkLocationPermission() async {
+  static Future<bool> checkLocationPermission() async {
     bool serviceEnabled;
     LocationPermission permission;
 
     // Test if location services are enabled.
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
+      Future.error('Location services are disabled.');
+      return false;
     }
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
+        Future.error('Location permissions are denied');
+        return false;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
+      Future.error('Location permissions are permanently denied, we cannot request permissions.');
+      return false;
     }
+    
+    return true;
   }
 
   static double _toRadian(double degree) {
