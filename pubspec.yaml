@@ -39,6 +39,7 @@ dependencies:
   vector_math: 2.1.2
   geolocator: ^9.0.0
   flutter_compass: ^0.7.0
+  flutter_riverpod: ^2.0.2
 
 dev_dependencies:
   flutter_test:

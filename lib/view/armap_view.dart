@@ -6,8 +6,10 @@ import 'package:ar_flutter_plugin/managers/ar_object_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_session_manager.dart';
 import 'package:ar_flutter_plugin/models/ar_node.dart';
 import 'package:flutter/material.dart';
-import 'package:matika/gps_utli.dart';
+import 'package:matika/data/coordinate.dart';
 import 'package:vector_math/vector_math_64.dart';
+
+import '../business_logic/gps_logic.dart';
 
 class ARMapView extends StatefulWidget {
   const ARMapView({Key? key}) : super(key: key);
@@ -26,14 +28,13 @@ class _ARMapViewState extends State<ARMapView> {
   ARNode? localObjectNode;
 
   // オブジェクトを配置する座標
-  double latitude = 35.102902;
-  double longitude = 136.722996;
-  double altitude = 1;
+  Coordinate targetCoordinate = Coordinate(
+    latitude: 35.1758208, longitude: 136.8865487, altitude: 1,);
 
   @override
   void initState() {
     super.initState();
-    GPSUtil.checkLocationPermission();
+    GpsLogic.checkLocationPermission();
   }
 
   @override
@@ -47,9 +48,6 @@ class _ARMapViewState extends State<ARMapView> {
     updateObjectPosition();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("AR Map View"),
-      ),
       body: SizedBox(
         height: MediaQuery.of(context).size.height * 0.8,
         child: ARView(
@@ -77,7 +75,7 @@ class _ARMapViewState extends State<ARMapView> {
 
   // オブジェクトを設置する
   Future<void> updateObjectPosition() async {
-    Vector3 targetPosition = await GPSUtil.convertCoordinate(latitude, longitude, altitude);
+    Vector3 targetPosition = await GpsLogic.convertCoordinate(targetCoordinate);
     print(targetPosition);
 
     if (localObjectNode != null) {

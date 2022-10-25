@@ -2,37 +2,37 @@ import 'dart:math' show atan2, cos, pi, sin;
 
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:matika/data/coordinate.dart';
 import 'package:vector_math/vector_math_64.dart';
 
-class GPSUtil {
+class GpsLogic {
   // ARで利用できる形に座標を変換する
-  static Future<Vector3> convertCoordinate(
-      double objectLatitude, double objectLongitude, double objectAltitude) async {
+  static Future<Vector3> convertCoordinate(Coordinate targetCoordinate) async {
     // 現在位置を取得
     Position currentPosition = await Geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
     double distance = Geolocator.distanceBetween(
         currentPosition.latitude, currentPosition.longitude,
-        objectLatitude, objectLongitude);
+        targetCoordinate.latitude, targetCoordinate.longitude);
 
     double angle = _angleFromCoordinate(
       currentPosition.latitude, currentPosition.longitude,
-      objectLatitude, objectLongitude
+        targetCoordinate.latitude, targetCoordinate.longitude
     );
 
     int direction = await _calculateDegree(angle);
     if (direction == angle.truncate()) {
       // tan(90)
-      return Vector3(0, objectAltitude, distance);
+      return Vector3(0, targetCoordinate.altitude, distance);
     } else if (direction == -angle.truncate()) {
       // tan(-90)
-      return Vector3(0, objectAltitude, -distance);
+      return Vector3(0, targetCoordinate.altitude, -distance);
     } else {
       double angleInRadian = _toRadian(angle - direction);
       return Vector3(
           sin(angleInRadian) * distance,
-          objectAltitude,
+          targetCoordinate.altitude,
           cos(angleInRadian) * distance
       );
     }

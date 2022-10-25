@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:matika/armap_view.dart';
+import 'package:matika/view/armap_view.dart';
 
 void main() {
   runApp(const MyApp());
