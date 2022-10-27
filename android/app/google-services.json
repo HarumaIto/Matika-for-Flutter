@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1090916298249",
+    "project_id": "matika-6cfad",
+    "storage_bucket": "matika-6cfad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1090916298249:android:ebae6597d86c045d3892d8",
+        "android_client_info": {
+          "package_name": "com.illusonal.matika"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1090916298249-1edqj4kf3fqkj381fuvd2fmr7csf3h0r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwPvY70zoNH3v3ZZk2Fbq3cyjeKuV3Kck"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1090916298249-1edqj4kf3fqkj381fuvd2fmr7csf3h0r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -6,6 +6,7 @@ import 'package:ar_flutter_plugin/managers/ar_object_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_session_manager.dart';
 import 'package:ar_flutter_plugin/models/ar_node.dart';
 import 'package:flutter/material.dart';
+import 'package:matika/business_logic/active_object_logic.dart';
 import 'package:matika/data/coordinate.dart';
 import 'package:vector_math/vector_math_64.dart';
 
@@ -24,17 +25,19 @@ class _ARMapViewState extends State<ARMapView> {
   // Nodeに関連するすべてのアクションを管理します
   late ARObjectManager arObjectManager;
 
-  // ノードオブジェクトのモデルクラス
-  ARNode? localObjectNode;
+  // 表示するオブジェクトを管理する
+  List<ARNode?> objectNodes = [];
 
-  // オブジェクトを配置する座標
-  Coordinate targetCoordinate = Coordinate(
-    latitude: 35.1758208, longitude: 136.8865487, altitude: 1,);
+  // 配置するオブジェクトの座標
+  ActiveObjectLogic activeObjectLogic = ActiveObjectLogic();
+  List<Coordinate> coordinates = [];
 
   @override
   void initState() {
     super.initState();
+    // パーミッションチェック
     GpsLogic.checkLocationPermission();
+    // 表示するターゲットを取得
   }
 
   @override
@@ -45,15 +48,31 @@ class _ARMapViewState extends State<ARMapView> {
 
   @override
   Widget build(BuildContext context) {
-    updateObjectPosition();
+    updateObjectsPosition();
 
-    return Scaffold(
-      body: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.8,
-        child: ARView(
-          onARViewCreated: onARViewCreated,
-        ),
-      ),
+    return SizedBox(
+      child: FutureBuilder(
+        future: activeObjectLogic.getObjects(),
+        builder: (context, snapshot) {
+          coordinates = snapshot.requireData;
+          // 通信中はスピナーを表示
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const CircularProgressIndicator();
+          }
+          // エラー発生時はエラーメッセージを表示
+          if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          }
+          // データがnullでないかチェック
+          if (snapshot.hasData) {
+            return ARView(
+              onARViewCreated: onARViewCreated,
+            );
+          } else {
+            return const Text("データが存在しません");
+          }
+        },
+      )
     );
   }
 
@@ -74,28 +93,30 @@ class _ARMapViewState extends State<ARMapView> {
   }
 
   // オブジェクトを設置する
-  Future<void> updateObjectPosition() async {
-    Vector3 targetPosition = await GpsLogic.convertCoordinate(targetCoordinate);
-    print(targetPosition);
+  void updateObjectsPosition() async {
+    // 決められた範囲のオブジェクトを表示させる
+    for (int i=0; i<coordinates.length; i++) {
+      Vector3 targetPosition = await GpsLogic.convertCoordinate(coordinates[i]);
 
-    if (localObjectNode != null) {
-      // すでにオブジェクトを作成していたら
-      setState(() {
-        localObjectNode!.position = targetPosition;
-      });
-    } else {
-      // 新しいオブジェクトを生成
-      var newNode = ARNode(
-        type: NodeType.localGLTF2,
-        uri: "assets/Chicken_01/Chicken_01.gltf",
-        position: targetPosition,
-        rotation: Vector4(1.0, 0.0, 0.0, 0.0)
-      );
-      // ARViewにセットする
-      bool? didAddLocalNode = await arObjectManager.addNode(newNode);
-      setState(() {
-        localObjectNode = (didAddLocalNode!) ? newNode : null;
-      });
+      if (objectNodes[i] != null) {
+        // すでにオブジェクトを作成していたら
+        setState(() {
+          objectNodes[i]!.position = targetPosition;
+        });
+      } else {
+        // 新しいオブジェクトを生成
+        var newNode = ARNode(
+            type: NodeType.localGLTF2,
+            uri: "assets/Chicken_01/Chicken_01.gltf",
+            position: targetPosition,
+            rotation: Vector4(1.0, 0.0, 0.0, 0.0)
+        );
+        // ARViewにセットする
+        bool? didAddLocalNode = await arObjectManager.addNode(newNode);
+        setState(() {
+          objectNodes[i] = (didAddLocalNode!) ? newNode : null;
+        });
+      }
     }
   }
 }

@@ -6,6 +6,16 @@ import 'package:matika/data/coordinate.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 class GpsLogic {
+  static Future<Coordinate> getCurrentCoordinate() async {
+    Position currentPosition = await Geolocator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+    return Coordinate(
+        latitude: currentPosition.latitude,
+        longitude: currentPosition.longitude,
+        altitude: currentPosition.altitude);
+  }
+
   // ARで利用できる形に座標を変換する
   static Future<Vector3> convertCoordinate(Coordinate targetCoordinate) async {
     // 現在位置を取得

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1090916298249-2ia1cl6k7s7t3n9aar964mt4s0366b8a.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1090916298249-2ia1cl6k7s7t3n9aar964mt4s0366b8a</string>
+	<key>API_KEY</key>
+	<string>AIzaSyC9mNODRxykkorFFVFgGnsANFV4BzpodE4</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1090916298249</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.illusonal.matika</string>
+	<key>PROJECT_ID</key>
+	<string>matika-6cfad</string>
+	<key>STORAGE_BUCKET</key>
+	<string>matika-6cfad.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1090916298249:ios:599b08e66872fed43892d8</string>
+</dict>
+</plist>
