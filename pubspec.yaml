@@ -38,16 +38,16 @@ dependencies:
   # state management
   flutter_riverpod: ^2.0.2
   # AR and GPS
-  ar_flutter_plugin: ^0.7.1
+  arkit_plugin: ^1.0.5
   vector_math: 2.1.2
   geolocator: ^9.0.0
   flutter_compass: ^0.7.0
   # Firebase
   firebase_core: ^2.1.0
-  cloud_firestore: ^4.0.2
   firebase_auth: ^4.0.2
-  geo_firestore_flutter:
-    git: https://github.com/msk-R-ito/geo_firestore
+  cloud_firestore: ^4.0.2
+  geoflutterfire2:
+    git: https://github.com/msk-R-ito/GeoFlutterFire2
 
 dev_dependencies:
   flutter_test:
@@ -70,9 +70,6 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
-  assets:
-    - assets/Chicken_01/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

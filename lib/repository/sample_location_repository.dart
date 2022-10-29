@@ -5,7 +5,7 @@ class SampleLocationRepository {
 
   final _db = FirebaseFirestore.instance;
 
-  Future<QuerySnapshot> readLocation() async {
+  Future<QuerySnapshot<Map<String, dynamic>>> readLocation() async {
     // すべてのサンプルのデータを取得する
     return await _db.collection(collectionName).get();
   }
