@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:matika/business_logic/gps_logic.dart';
 import 'package:matika/repository/geo_search_repository.dart';

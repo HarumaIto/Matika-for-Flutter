@@ -16,52 +16,32 @@ class GpsLogic {
         altitude: currentPosition.altitude);
   }
 
-  // ARで利用できる形に座標を変換する
-  static Future<Vector3> convertCoordinate(Coordinate targetCoordinate) async {
-    // 現在位置を取得
-    Position currentPosition = await Geolocator
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-
+  // 現在座標と目標座標から、モデルの表示位置を計算する
+  static Future<Vector3> convertCoordinate(
+      Coordinate targetCoordinate, Coordinate currentCoordinate) async {
     double distance = Geolocator.distanceBetween(
-        currentPosition.latitude, currentPosition.longitude,
+        currentCoordinate.latitude, currentCoordinate.longitude,
         targetCoordinate.latitude, targetCoordinate.longitude);
+    double bearing = Geolocator.bearingBetween(
+        currentCoordinate.latitude, currentCoordinate.longitude,
+        targetCoordinate.latitude, targetCoordinate.longitude);
+    double height = _calculateHeight(currentCoordinate.altitude, targetCoordinate.altitude);
+    int direction = await _calculateDegree(bearing);
 
-    double angle = _angleFromCoordinate(
-      currentPosition.latitude, currentPosition.longitude,
-        targetCoordinate.latitude, targetCoordinate.longitude
-    );
-
-    int direction = await _calculateDegree(angle);
-    if (direction == angle.truncate()) {
+    if (direction == bearing.truncate()) {
       // tan(90)
-      return Vector3(0, targetCoordinate.altitude, distance);
-    } else if (direction == -angle.truncate()) {
+      return Vector3(0, height, distance);
+    } else if (direction == -bearing.truncate()) {
       // tan(-90)
-      return Vector3(0, targetCoordinate.altitude, -distance);
+      return Vector3(0, height, -distance);
     } else {
-      double angleInRadian = _toRadian(angle - direction);
+      double angleInRadian = _toRadian(bearing - direction);
       return Vector3(
           sin(angleInRadian) * distance,
-          targetCoordinate.altitude,
+          height,
           cos(angleInRadian) * distance
       );
     }
-  }
-
-  // 座標から２点角を計算する
-  static double _angleFromCoordinate(
-      double currentLat, double currentLong, double objectLat, double objectLong) {
-    double phi1 = _toRadian(currentLat);
-    double phi2 = _toRadian(objectLat);
-    double lambda1 = _toRadian(currentLong);
-    double lambda2 = _toRadian(objectLong);
-
-    double y = sin(lambda2 - lambda1) * cos(phi2);
-    double x = cos(phi1) * sin(phi2) - sin(phi1) * cos(phi2) * cos(lambda2- lambda1);
-    double theta = atan2(y, x);
-    double angle = (_toDegree(theta) + 360) % 360;
-
-    return angle;
   }
 
   // 方位の差分を計算する
@@ -97,6 +77,11 @@ class GpsLogic {
     }
     
     return true;
+  }
+
+  // 2点間の距離を計算します
+  static double _calculateHeight(double num1, double num2) {
+    return num2 - num1;
   }
 
   static double _toRadian(double degree) {

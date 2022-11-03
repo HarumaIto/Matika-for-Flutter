@@ -61,19 +61,33 @@ class _ARMapViewState extends State<ARMapView> {
 
   // 決められた範囲のオブジェクトを設置する
   void setObjectsNode() async {
+    // 一つもデータがなければ処理の軽減のためにreturnする
+    if (coordinates.isEmpty) return;
+
+    // 現在位置を取得
+    Coordinate currentCoordinate = await GpsLogic.getCurrentCoordinate();
+    // 原点として親要素を空のジオメトリで配置する
+    var originNode = ARKitNode(
+      name: 'origin',
+      geometry: ARKitSphere(radius: 0.01),
+      position: Vector3(0, 0, 0),
+      eulerAngles: Vector3.zero()
+    );
+    arKitController.add(originNode);
+
+    // 親要素との差分で配置する
     for (int i=0; i<coordinates.length; i++) {
-      Vector3 targetPosition = await GpsLogic.convertCoordinate(coordinates[i]['coordinate']);
+      // 表示する位置を取得
+      Vector3 displayPosition = await GpsLogic
+          .convertCoordinate(coordinates[i]['coordinate'], currentCoordinate);
 
       // 新しいオブジェクトを生成
       var node = ARKitNode(
-        name: coordinates[i]['name'],
-        geometry: ARKitSphere(radius: 0.5),
-        position: targetPosition,
+        geometry: ARKitSphere(radius: 0.8),
+        position: displayPosition,
       );
-
-      // ARKitSceneViewにセットする
-      arKitController.add(node);
-      await Future.delayed(const Duration(milliseconds: 300));
+      // 'origin'の子要素としてARKitControllerに追加
+      arKitController.add(node, parentNodeName: 'origin');
     }
   }
 }
