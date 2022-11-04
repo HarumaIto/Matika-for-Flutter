@@ -46,8 +46,7 @@ dependencies:
   firebase_core: ^2.1.0
   firebase_auth: ^4.0.2
   cloud_firestore: ^4.0.2
-  geoflutterfire2:
-    git: https://github.com/msk-R-ito/GeoFlutterFire2
+  geoflutterfire2: any
 
 dev_dependencies:
   flutter_test:
