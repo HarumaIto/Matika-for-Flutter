@@ -5,9 +5,12 @@ import 'package:matika/repository/geo_search_repository.dart';
 import '../data/coordinate.dart';
 
 class ActiveObjectLogic {
+  List<Map<String, dynamic>> objects = [];
 
   // Mapに表示するオブジェクトを返す
   Future getObjects() async {
+    if (objects.isNotEmpty) return objects;
+    objects.clear();
     // 現在位置を取得
     Coordinate currentCoordinate = await GpsLogic.getCurrentCoordinate();
     // 設定のデータから個数と範囲を取得
@@ -15,13 +18,14 @@ class ActiveObjectLogic {
     // 2次元座標と位置情報から検索する
     GeoSearchRepository geoSearchRepository = GeoSearchRepository();
     // geoFirestoreに個数のプロパティを設定する
-    return _convertFieldToCoordinate(
+    objects.addAll(_convertFieldToCoordinate(
         await geoSearchRepository.read(currentCoordinate, 1)
-    );
+    ));
+    return objects;
   }
 
   // documentのfield値からCoordinateクラスへ変換する
-  List<Map> _convertFieldToCoordinate(List<DocumentSnapshot> docs) {
+  List<Map<String, dynamic>> _convertFieldToCoordinate(List<DocumentSnapshot> docs) {
     List<Map<String, dynamic>> locationData = [];
     for (var doc in docs) {
       if (doc.exists) {

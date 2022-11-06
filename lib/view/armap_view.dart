@@ -1,5 +1,6 @@
 import 'package:arkit_plugin/arkit_plugin.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_compass/flutter_compass.dart';
 import 'package:matika/business_logic/active_object_logic.dart';
 import 'package:matika/data/coordinate.dart';
 import 'package:vector_math/vector_math_64.dart';
@@ -56,25 +57,16 @@ class _ARMapViewState extends State<ARMapView> {
   // ARKitSceneViewから情報を経てそれぞれを初期化する
   void onARKitViewCreated(ARKitController arKitController) {
     this.arKitController = arKitController;
-    setObjectsNode();
+    setObjectsNodes();
   }
 
   // 決められた範囲のオブジェクトを設置する
-  void setObjectsNode() async {
+  void setObjectsNodes() async {
     // 一つもデータがなければ処理の軽減のためにreturnする
     if (coordinates.isEmpty) return;
 
     // 現在位置を取得
     Coordinate currentCoordinate = await GpsLogic.getCurrentCoordinate();
-    // 原点として親要素を空のジオメトリで配置する
-    var originNode = ARKitNode(
-      name: 'origin',
-      geometry: ARKitSphere(radius: 0.01),
-      position: Vector3(0, 0, 0),
-      eulerAngles: Vector3.zero()
-    );
-    arKitController.add(originNode);
-
     // 親要素との差分で配置する
     for (int i=0; i<coordinates.length; i++) {
       // 表示する位置を取得
@@ -86,8 +78,10 @@ class _ARMapViewState extends State<ARMapView> {
         geometry: ARKitSphere(radius: 0.8),
         position: displayPosition,
       );
-      // 'origin'の子要素としてARKitControllerに追加
-      arKitController.add(node, parentNodeName: 'origin');
+      // ARKitControllerに追加
+      arKitController.add(node);
+
+      print(displayPosition);
     }
   }
 }
