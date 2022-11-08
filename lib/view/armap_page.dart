@@ -1,22 +1,23 @@
+import 'dart:io';
+
 import 'package:arkit_plugin/arkit_plugin.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_compass/flutter_compass.dart';
 import 'package:matika/business_logic/active_object_logic.dart';
 import 'package:matika/data/coordinate.dart';
-import 'package:vector_math/vector_math_64.dart';
+import 'package:vector_math/vector_math_64.dart' as vector;
 
 import '../business_logic/gps_logic.dart';
 
-class ARMapView extends StatefulWidget {
-  const ARMapView({Key? key}) : super(key: key);
+class ARMapPage extends StatefulWidget {
+  const ARMapPage({Key? key}) : super(key: key);
 
   @override
-  State<ARMapView> createState() => _ARMapViewState();
+  State<ARMapPage> createState() => _ARMapPageState();
 }
 
-class _ARMapViewState extends State<ARMapView> {
+class _ARMapPageState extends State<ARMapPage> {
   // ARKitViewに関連するイベントを管理します
-  late ARKitController arKitController;
+  ARKitController? arKitController;
 
   // 配置するオブジェクトの座標
   ActiveObjectLogic activeObjectLogic = ActiveObjectLogic();
@@ -29,12 +30,18 @@ class _ARMapViewState extends State<ARMapView> {
 
   @override
   void dispose() {
-    arKitController.dispose();
+    if (arKitController != null) arKitController!.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (Platform.isAndroid) {
+      return const Center(
+        child: Text('Androidは近日実装予定です'),
+      );
+    }
+
     // FutureBuilderで現在地を取得する
     return FutureBuilder(
       future: activeObjectLogic.getObjects(),
@@ -70,7 +77,7 @@ class _ARMapViewState extends State<ARMapView> {
     // 親要素との差分で配置する
     for (int i=0; i<coordinates.length; i++) {
       // 表示する位置を取得
-      Vector3 displayPosition = await GpsLogic
+      vector.Vector3 displayPosition = await GpsLogic
           .convertCoordinate(coordinates[i]['coordinate'], currentCoordinate);
 
       // 新しいオブジェクトを生成
@@ -79,9 +86,36 @@ class _ARMapViewState extends State<ARMapView> {
         position: displayPosition,
       );
       // ARKitControllerに追加
-      arKitController.add(node);
-
-      print(displayPosition);
+      arKitController!.add(node);
+      // オブジェクトの上にテキストを表示させる
+      drawText(coordinates[i]['name'], displayPosition);
     }
+  }
+
+  // AR空間にテキストを表示させる
+  void drawText(String text, vector.Vector3 nodePosition) {
+    // オブジェクトの上にテキストを表示させたいため
+    final position = vector.Vector3(
+      nodePosition.x,
+      nodePosition.y + 0.1,
+      nodePosition.z
+    );
+    final textGeometry = ARKitText(
+      text: text,
+      extrusionDepth: 1,
+      materials: [
+        ARKitMaterial(
+          diffuse: ARKitMaterialProperty.color(Colors.white)
+        )
+      ]
+    );
+    const scale = 0.1;
+    final vectorScale = vector.Vector3(scale, scale, scale);
+    final node = ARKitNode(
+      geometry: textGeometry,
+      position: position,
+      scale: vectorScale,
+    );
+    arKitController!.add(node);
   }
 }

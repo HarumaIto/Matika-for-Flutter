@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:matika/view/armap_view.dart';
+import 'package:matika/view/armap_page.dart';
+import 'package:matika/view/reservation_page.dart';
+import 'package:matika/view/user_page.dart';
 
 class ARMapController extends StatefulWidget {
   const ARMapController({super.key});
@@ -11,6 +13,12 @@ class ARMapController extends StatefulWidget {
 class _ARMapControllerState extends State<ARMapController> {
   int _pageIndex = 0;
 
+  final _pages = [
+    const ARMapPage(),
+    const ReservationPage(),
+    const UserPage()
+  ];
+
   void _onItemTapped(int index) {
     setState(() {
       _pageIndex = index;
@@ -20,7 +28,7 @@ class _ARMapControllerState extends State<ARMapController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const ARMapView(),
+      body: _pages[_pageIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _pageIndex,
         onTap: _onItemTapped,
@@ -31,10 +39,15 @@ class _ARMapControllerState extends State<ARMapController> {
             label: 'ARマップ'
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.people),
-            activeIcon: Icon(Icons.people_outline),
-            label: 'ユーザー'
+            icon: Icon(Icons.edit_calendar),
+            activeIcon: Icon(Icons.edit_calendar_outlined),
+            label: '予約'
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            activeIcon: Icon(Icons.person_outline),
+            label: 'マイページ'
+          )
         ],
         type: BottomNavigationBarType.fixed,
       ),
