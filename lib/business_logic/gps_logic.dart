@@ -21,7 +21,7 @@ class GpsLogic {
   static Future<Vector3> convertCoordinate(
       Coordinate targetCoordinate, Coordinate currentCoordinate) async {
     // ２点間の距離を取得する
-    double distance = _calculateDistance(currentCoordinate, targetCoordinate);
+    double distance = calculateDistance(currentCoordinate, targetCoordinate);
     // ２点間の角度を取得する
     double bearing = _calculateBearing(currentCoordinate, targetCoordinate);
     // ２点間の高度差を取得する
@@ -39,7 +39,8 @@ class GpsLogic {
     );
   }
 
-  static double _calculateDistance(Coordinate current, Coordinate target) {
+  // 2点間距離を計算する
+  static double calculateDistance(Coordinate current, Coordinate target) {
     double radCurrentLat = radians(current.latitude);
     double radCurrentLon = radians(current.longitude);
     double radTargetLat = radians(target.latitude);

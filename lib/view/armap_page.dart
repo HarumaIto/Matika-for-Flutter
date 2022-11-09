@@ -52,7 +52,7 @@ class _ARMapPageState extends State<ARMapPage> {
         if (snapshot.hasData) {
           coordinates.addAll(snapshot.data);
           return ARKitSceneView(
-              onARKitViewCreated: onARKitViewCreated
+            onARKitViewCreated: onARKitViewCreated,
           );
         } else {
           return const Center(child: Text('データがありません'),);
@@ -72,18 +72,22 @@ class _ARMapPageState extends State<ARMapPage> {
     // 一つもデータがなければ処理の軽減のためにreturnする
     if (coordinates.isEmpty) return;
 
+    // Test用Nodeを作成する
+    // 必要なければコメントアウトする
+    createTestNode();
+
     // 現在位置を取得
     Coordinate currentCoordinate = await GpsLogic.getCurrentCoordinate();
     // 親要素との差分で配置する
     for (int i=0; i<coordinates.length; i++) {
       // 表示する位置を取得
-      vector.Vector3 displayPosition = await GpsLogic
-          .convertCoordinate(coordinates[i]['coordinate'], currentCoordinate);
-
+      vector.Vector3 displayPosition
+          = await GpsLogic.convertCoordinate(coordinates[i]['coordinate'], currentCoordinate);
       // 新しいオブジェクトを生成
-      var node = ARKitNode(
-        geometry: ARKitSphere(radius: 0.8),
+      var node = ARKitReferenceNode(
+        url: 'yazirushi.dae',
         position: displayPosition,
+        scale: vector.Vector3.all(1),
       );
       // ARKitControllerに追加
       arKitController!.add(node);
@@ -102,7 +106,7 @@ class _ARMapPageState extends State<ARMapPage> {
     );
     final textGeometry = ARKitText(
       text: text,
-      extrusionDepth: 1,
+      extrusionDepth: 0.2,
       materials: [
         ARKitMaterial(
           diffuse: ARKitMaterialProperty.color(Colors.white)
@@ -117,5 +121,16 @@ class _ARMapPageState extends State<ARMapPage> {
       scale: vectorScale,
     );
     arKitController!.add(node);
+  }
+
+  // デバッグ用にNodeを作成する
+  void createTestNode() {
+    var testNode = ARKitReferenceNode(
+        url: 'yazirushi.dae',
+        position: vector.Vector3(0,0,-10),
+        scale: vector.Vector3.all(1)
+    );
+    arKitController!.add(testNode);
+    drawText('test', vector.Vector3(0,0,-10));
   }
 }

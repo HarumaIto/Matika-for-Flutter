@@ -19,7 +19,7 @@ class ActiveObjectLogic {
     GeoSearchRepository geoSearchRepository = GeoSearchRepository();
     // geoFirestoreに個数のプロパティを設定する
     objects.addAll(_convertFieldToCoordinate(
-        await geoSearchRepository.read(currentCoordinate, 1)
+        await geoSearchRepository.read(currentCoordinate, 0.8)
     ));
     return objects;
   }
