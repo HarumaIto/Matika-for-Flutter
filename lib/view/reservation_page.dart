@@ -29,8 +29,9 @@ class ReservationPageState extends State<ReservationPage> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    double blockHorizontal = SizeConfig.blockSizeHorizontal!;
     return Padding(
-      padding: const EdgeInsets.only(top: 64, left: 16, right: 16),
+      padding: EdgeInsets.only(top: blockHorizontal*6, left: 16, right: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -44,7 +45,7 @@ class ReservationPageState extends State<ReservationPage> {
                   // お店の画像を表示
                   Padding(
                     padding: const EdgeInsets.only(right: 16),
-                    child: Icon(reservedStore.icon, size: 84, color: Colors.amber,),
+                    child: Icon(reservedStore.icon, size: blockHorizontal*20, color: Colors.amber,),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,7 +54,7 @@ class ReservationPageState extends State<ReservationPage> {
                       const Text('店舗名', style: TextStyle(fontSize: 12),),
                       Container(
                         margin: const EdgeInsets.only(left: 8, bottom: 8),
-                        child: Text(reservedStore.name, style: const TextStyle(fontSize: 20),),
+                        child: Text(reservedStore.name, style: TextStyle(fontSize: blockHorizontal*5),),
                       ),
                       // 残りの待ち時間を表示
                       const Text('待ち状況', style: TextStyle(fontSize: 12),),
@@ -63,7 +64,7 @@ class ReservationPageState extends State<ReservationPage> {
                         child: TimeRemainingText(
                           remainingType: reservedStore.type,
                           stateText: reservedStore.state,
-                          normalTextSize: 20,
+                          normalTextSize: blockHorizontal*5,
                         ),
                       ),
                     ],

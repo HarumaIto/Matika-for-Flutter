@@ -11,7 +11,7 @@ class ARMapController extends StatefulWidget {
 }
 
 class _ARMapControllerState extends State<ARMapController> {
-  int _pageIndex = 0;
+  int _pageIndex = 1;
 
   final _pages = [
     const ARMapPage(),
