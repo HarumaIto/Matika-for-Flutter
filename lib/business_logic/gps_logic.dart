@@ -3,6 +3,7 @@ import 'dart:math' show asin, atan2, cos, pow, sin, sqrt;
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:matika/data/coordinate.dart';
+import 'package:matika/repository/geo_search_repository.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 class GpsLogic {
@@ -14,6 +15,12 @@ class GpsLogic {
         latitude: currentPosition.latitude,
         longitude: currentPosition.longitude,
         altitude: currentPosition.altitude);
+  }
+
+  static void addLocationForFirestore(String name) async {
+    Coordinate current = await getCurrentCoordinate();
+
+    GeoSearchRepository().write(name, current);
   }
 
   // 現在座標と目標座標から、モデルの表示位置を計算する

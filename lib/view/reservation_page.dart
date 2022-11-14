@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:matika/data/size_config.dart';
 import 'package:matika/data/store.dart';
 import 'package:matika/view/widget/time_remaining_text.dart';
 
@@ -27,6 +28,7 @@ class ReservationPageState extends State<ReservationPage> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return Padding(
       padding: const EdgeInsets.only(top: 64, left: 16, right: 16),
       child: Column(

@@ -24,13 +24,16 @@ class GeoSearchRepository {
         .within(center: center, radius: radius, field: 'position').first;
   }
   
-  void write() {
+  void write(String name, Coordinate coordinate) {
     // 必要なインスタンスを初期化
     final geo = GeoFlutterFire();
-    GeoFirePoint location = geo.point(latitude: 35.1022847, longitude: 136.7240748);
+    GeoFirePoint location = geo.point(
+        latitude: coordinate.latitude, longitude: coordinate.longitude);
 
     // Firestoreへデータ追加
-    _db.collection(collectionName)
-        . add({'name': '近所の公衆トイレ', 'position': location.data, 'altitude': 1});
+    _db.collection(collectionName).add({
+      'name': name,
+      'position': location.data,
+      'altitude': coordinate.altitude});
   }
 }

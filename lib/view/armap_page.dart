@@ -4,6 +4,8 @@ import 'package:arkit_plugin/arkit_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:matika/business_logic/active_object_logic.dart';
 import 'package:matika/data/coordinate.dart';
+import 'package:matika/data/size_config.dart';
+import 'package:matika/view/add_location_page.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 
 import '../business_logic/gps_logic.dart';
@@ -22,6 +24,8 @@ class _ARMapPageState extends State<ARMapPage> {
   // 配置するオブジェクトの座標
   ActiveObjectLogic activeObjectLogic = ActiveObjectLogic();
   List<Map<String, dynamic>> coordinates = [];
+
+  final List _settingPopupItem = ['設定', '登録モード'];
 
   @override
   void initState() {
@@ -43,21 +47,47 @@ class _ARMapPageState extends State<ARMapPage> {
     }
 
     // FutureBuilderで現在地を取得する
-    return FutureBuilder(
-      future: activeObjectLogic.getObjects(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasData) {
-          coordinates.addAll(snapshot.data);
-          return ARKitSceneView(
-            onARKitViewCreated: onARKitViewCreated,
-          );
-        } else {
-          return const Center(child: Text('データがありません'),);
-        }
-      },
+    return Stack(
+      fit: StackFit.expand, //画面いっぱいに描画
+      children: [
+        FutureBuilder(
+          future: activeObjectLogic.getObjects(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasData) {
+              coordinates.addAll(snapshot.data);
+              return ARKitSceneView(
+                onARKitViewCreated: onARKitViewCreated,
+              );
+            } else {
+              return const Center(child: Text('データがありません'),);
+            }
+          },
+        ),
+        Align(
+          alignment: const Alignment(1, -1),
+          child: PopupMenuButton(
+            icon: const Icon(Icons.settings),
+            onSelected: (value) {
+              if (value == _settingPopupItem[1]) {
+                MaterialPageRoute(builder: (context) {
+                  return AddLocationPage();
+                });
+              }
+            },
+            itemBuilder: (context) {
+              return _settingPopupItem.map((str) {
+                return PopupMenuItem(
+                  value: str,
+                  child: Text(str),
+                );
+              }).toList();
+            },
+          )
+        )
+      ],
     );
   }
 
